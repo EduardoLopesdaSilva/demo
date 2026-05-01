@@ -5,12 +5,14 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.dto.CheckinDTO;
 import com.example.demo.dto.CheckinResponseDTO;
+import com.example.demo.dto.CheckoutDTO;
 import com.example.demo.dto.CheckoutResponseDTO;
 import com.example.demo.entity.Arquivo;
 import com.example.demo.entity.CheckinEntity;
 import com.example.demo.entity.CheckoutEntity;
 import com.example.demo.entity.PostoEntity;
 import com.example.demo.repository.CheckinRepository;
+import com.example.demo.repository.CheckoutRepository;
 import com.example.demo.repository.PostoRepository;
 
 @Service
@@ -24,6 +26,9 @@ public class CheckService {
 
     @Autowired
     private CheckinRepository checkinRepository;
+
+    @Autowired
+    private CheckoutRepository checkoutRepository;
 
     public CheckinResponseDTO checkin(CheckinDTO dto){
 
@@ -48,7 +53,7 @@ public class CheckService {
 
         return crd;
     }
-    public CheckoutResponseDTO checkout(CheckoutResponseDTO dto){
+    public CheckoutResponseDTO checkout(CheckoutDTO dto){
 
         //ID sendo transfomrado em entidade
         PostoEntity posto = postoRepository.findById(dto.getPostoId()).orElseThrow();
