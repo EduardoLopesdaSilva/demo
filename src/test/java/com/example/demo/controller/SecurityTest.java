@@ -2,7 +2,7 @@ package com.example.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.demo.config.JwtUtil;
@@ -31,7 +31,7 @@ public class SecurityTest {
     }
     @Test
     void verificarRotaAdmin() throws Exception {
-        String token = jwt.generateToken("tantofazcomotantofez@admin.com", NivelAcesso.ADMIN.toString());
+        String token = jwt.generateToken("tantofazcomotantofez@admin.com", NivelAcesso.LIVRE.toString());
 
         mockMvc.perform(get("/test-security/admin")
         .header("Authorization", "Bearer" + token))
@@ -45,7 +45,7 @@ public class SecurityTest {
     }
     @Test
     void verificaRotaAdminComUsuarioPadrao() throws Exception {
-        String  token = jwt.generateToken("tantofaz@admin.com", NivelAcesso.PADRAO.toString());
+        String  token = jwt.generateToken("tantofaz@admin.com", NivelAcesso.OCUPADO.toString());
 
         mockMvc.perform(get("/test-security/admin")
         .header("Authorization", "Bearer" + token))

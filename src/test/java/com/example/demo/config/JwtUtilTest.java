@@ -30,7 +30,7 @@ public class JwtUtilTest {
     void deveExtrairEmailDoToken() {
         //ARRANGE - ORGANIZAR
         String email = "email@teste.com";
-        String token = jwt.generateToken(email, NivelAcesso.ADMIN.toString());
+        String token = jwt.generateToken(email, NivelAcesso.LIVRE.toString());
 
         // ACT - AGIR
         String emailExtraido = jwt.extractUsername(token);
@@ -43,18 +43,18 @@ public class JwtUtilTest {
     void deveExtrairNivelDoToken(){
         
         //ARRANGE - ORGANIZAR
-        String token = jwt.generateToken("teste@teste", NivelAcesso.ADMIN.toString());
+        String token = jwt.generateToken("teste@teste", NivelAcesso.LIVRE.toString());
 
         // ACT - AGIR
          String role = jwt.extractRole(token);
 
         //ASSERT - AFIRMA
-        assertEquals(NivelAcesso.ADMIN.toString(), role);
+        assertEquals(NivelAcesso.LIVRE.toString(), role);
     }
     @Test
     @DisplayName("Validar token adulterado")
     void validarAdulterado(){
-        String token = jwt.generateToken("usuario@teste.com", NivelAcesso.PADRAO.toString()
+        String token = jwt.generateToken("usuario@teste.com", NivelAcesso.LIVRE.toString()
     );
 
     String tokenAdulterado = token + "xxxmalioso";

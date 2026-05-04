@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.annotations.Public;
 import com.example.demo.dto.CheckinDTO;
+import com.example.demo.entity.PostoEntity;
+import com.example.demo.enums.NivelAcesso;
+import com.example.demo.repository.PostoRepository;
 import com.example.demo.service.CheckService;
 
 import jakarta.validation.Valid;
@@ -19,10 +22,26 @@ public class CheckinController {
     @Autowired
     private CheckService checkService;
 
-    @PostMapping("/in")
-    @Public
+    @Autowired
+    private PostoRepository postoRepository;
+    
+
+        @PostMapping("/in")
+        @Public
     public void checkin(@ModelAttribute @Valid CheckinDTO dto){
 
-        checkService.checkin(dto);
+    PostoEntity posto = postoRepository.findById(dto.getPostoId())
+        .orElseThrow(() -> new RuntimeException("Posto não encontrado"));
+
+    // 🚨 BLOQUEIO
+    if (posto.getStatus() == NivelAcesso.OCUPADO) {
+        throw new RuntimeException("Posto já está ocupado!");
+    }
+
+    // ✔ ocupa o posto
+    posto.setStatus(NivelAcesso.OCUPADO);
+    postoRepository.save(posto);
+
+    checkService.checkin(dto);
     }
 }

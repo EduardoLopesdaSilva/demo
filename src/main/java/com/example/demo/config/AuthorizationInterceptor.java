@@ -45,7 +45,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        // Valida o token JWT do header
+         // Valida o token JWT do header
         String token = extractToken(request);
         if (token == null || !jwtUtil.validateToken(token)) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED);

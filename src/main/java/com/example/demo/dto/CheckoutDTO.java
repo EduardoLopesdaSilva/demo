@@ -25,6 +25,8 @@ public class CheckoutDTO {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String lesoes;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String queimaduras;
 
 
 

@@ -1,7 +1,11 @@
 package com.example.demo.entity;
 
+import com.example.demo.enums.NivelAcesso;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,6 +25,10 @@ public class PostoEntity extends BaseEntity{
     
 
     @Column
-    private String descricao;    
+    private String descricao;   
 
+
+    @Enumerated(EnumType.STRING)
+    @Column
+    private NivelAcesso status;
 }

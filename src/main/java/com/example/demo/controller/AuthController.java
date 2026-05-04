@@ -30,7 +30,7 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    @PostMapping("/login")
+    @PostMapping("/auth/login")
     @Public
     public ResponseEntity<?> login(@RequestBody @Valid AuthDTO dto) {
         String email = dto.getEmail();

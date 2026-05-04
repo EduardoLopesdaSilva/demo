@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 //CheckoutEntity.java
 
+import com.example.demo.enums.Turno;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -25,11 +26,12 @@ public class CheckoutEntity extends BaseEntity {
     @ManyToOne
     private Arquivo foto;
 
+    private Turno turno;
+
   
     private String prevencoes;
     
-    
     private String lesoes;
 
-
+    private String queimaduras;
 }

@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.example.demo.enums.Turno;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -23,5 +24,9 @@ public class CheckinEntity extends BaseEntity {
 
     @ManyToOne
     private Arquivo foto;
+
+    
+
+    private Turno turno;
 
 }

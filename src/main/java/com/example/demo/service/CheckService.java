@@ -3,6 +3,8 @@ package com.example.demo.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
+import com.example.demo.enums.Turno;
 import com.example.demo.dto.CheckinDTO;
 import com.example.demo.dto.CheckinResponseDTO;
 import com.example.demo.dto.CheckoutDTO;
@@ -51,6 +53,19 @@ public class CheckService {
         crd.setPosto(posto.getNome());
         crd.setHorario(checkinSalvo.getCreatedAt());
 
+        LocalTime agora = LocalTime.now();
+
+
+        Turno turno;
+
+        if (agora.isBefore(LocalTime.of(12, 0))) {
+            turno = Turno.MANHA;
+        } else {
+            turno = Turno.TARDE;
+        }
+
+        checkin.setTurno(turno);
+
         return crd;
     }
     public CheckoutResponseDTO checkout(CheckoutDTO dto){
@@ -66,12 +81,31 @@ public class CheckService {
 
         checkout.setFoto(arquivo);
 
+        checkout.setPrevencoes(dto.getPrevencoes());
+        checkout.setLesoes(dto.getLesoes());
+        checkout.setQueimaduras(dto.getQueimaduras());
+
         CheckoutEntity checkoutSalvo = checkoutRepository.save(checkout);
 
         CheckoutResponseDTO crd = new CheckoutResponseDTO();
 
         crd.setPosto(posto.getNome());
         crd.setHorario(checkoutSalvo.getCreatedAt());
+        crd.setPrevencoes(checkoutSalvo.getPrevencoes());
+        crd.setLesoes(checkoutSalvo.getLesoes());
+        crd.setQueimaduras(checkoutSalvo.getQueimaduras());
+
+        LocalTime agora = LocalTime.now();
+
+        Turno turno;
+
+        if (agora.isBefore(LocalTime.of(12, 0))) {
+            turno = Turno.MANHA;
+        } else {
+            turno = Turno.TARDE;
+        }
+
+        checkout.setTurno(turno);
 
         return crd;
 
