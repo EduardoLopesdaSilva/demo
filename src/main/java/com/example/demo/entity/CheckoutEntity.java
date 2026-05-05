@@ -1,5 +1,4 @@
 package com.example.demo.entity;
-//CheckoutEntity.java
 
 import com.example.demo.enums.Turno;
 import jakarta.persistence.Entity;
@@ -14,24 +13,23 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-
 @Table(name = "checkouts")
-
 @EqualsAndHashCode(callSuper = false)
+
 public class CheckoutEntity extends BaseEntity {
 
-     @ManyToOne
+    @ManyToOne
     private PostoEntity posto;
+
+    @ManyToOne
+    private CheckinEntity checkin; // 🔥 CONEXÃO IMPORTANTE
 
     @ManyToOne
     private Arquivo foto;
 
     private Turno turno;
 
-  
     private String prevencoes;
-    
     private String lesoes;
-
     private String queimaduras;
 }
