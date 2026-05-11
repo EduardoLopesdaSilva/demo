@@ -20,6 +20,10 @@ import com.example.demo.repository.PostoRepository;
 @Service
 public class CheckService {
 
+    private Turno definirTurno() {
+    LocalTime agora = LocalTime.now();
+    return agora.isBefore(LocalTime.of(12, 0)) ? Turno.MANHA : Turno.TARDE;
+}
     @Autowired
     private ArquivoService arquivoService;
     
@@ -32,82 +36,73 @@ public class CheckService {
     @Autowired
     private CheckoutRepository checkoutRepository;
 
-    public CheckinResponseDTO checkin(CheckinDTO dto){
 
-          //ID sendo transfomrado em entidade
-        PostoEntity posto = postoRepository.findById(dto.getPostoId()).orElseThrow();
+   public CheckinResponseDTO checkin(CheckinDTO dto){
 
-        CheckinEntity checkin = new CheckinEntity();
+    PostoEntity posto = postoRepository.findById(dto.getPostoId()).orElseThrow();
 
-        checkin.setPosto(posto);
+    Turno turno = definirTurno();
 
-        Arquivo arquivo = arquivoService.upload(dto.getFoto());
+    // 🚨 VERIFICA SE JÁ TEM TURNO ABERTO
+    boolean existeAberto = checkinRepository
+        .existsByPostoAndTurnoAndFimIsNull(posto, turno);
 
-        checkin.setFoto(arquivo);
-
-        CheckinEntity checkinSalvo = checkinRepository.save(checkin);
-
-
-        CheckinResponseDTO crd = new CheckinResponseDTO();
-
-        crd.setPosto(posto.getNome());
-        crd.setHorario(checkinSalvo.getCreatedAt());
-
-        LocalTime agora = LocalTime.now();
-
-
-        Turno turno;
-
-        if (agora.isBefore(LocalTime.of(12, 0))) {
-            turno = Turno.MANHA;
-        } else {
-            turno = Turno.TARDE;
-        }
-
-        checkin.setTurno(turno);
-
-        return crd;
+    if (existeAberto) {
+        throw new RuntimeException("Já existe um check-in aberto para esse posto nesse turno");
     }
-    public CheckoutResponseDTO checkout(CheckoutDTO dto){
 
-        //ID sendo transfomrado em entidade
-        PostoEntity posto = postoRepository.findById(dto.getPostoId()).orElseThrow();
-        
-        CheckoutEntity checkout = new CheckoutEntity();
+    CheckinEntity checkin = new CheckinEntity();
+    checkin.setPosto(posto);
+    checkin.setTurno(turno);
 
-        checkout.setPosto(posto);
+    Arquivo arquivo = arquivoService.upload(dto.getFoto());
+    checkin.setFoto(arquivo);
 
-        Arquivo arquivo = arquivoService.upload(dto.getFoto());
+    CheckinEntity salvo = checkinRepository.save(checkin);
 
-        checkout.setFoto(arquivo);
+    CheckinResponseDTO response = new CheckinResponseDTO();
+    response.setPosto(posto.getNome());
+    response.setHorario(salvo.getCreatedAt());
 
-        checkout.setPrevencoes(dto.getPrevencoes());
-        checkout.setLesoes(dto.getLesoes());
-        checkout.setQueimaduras(dto.getQueimaduras());
+    return response;
+}
+ public CheckoutResponseDTO checkout(CheckoutDTO dto){
 
-        CheckoutEntity checkoutSalvo = checkoutRepository.save(checkout);
+    PostoEntity posto = postoRepository.findById(dto.getPostoId()).orElseThrow();
 
-        CheckoutResponseDTO crd = new CheckoutResponseDTO();
+    LocalTime agora = LocalTime.now();
 
-        crd.setPosto(posto.getNome());
-        crd.setHorario(checkoutSalvo.getCreatedAt());
-        crd.setPrevencoes(checkoutSalvo.getPrevencoes());
-        crd.setLesoes(checkoutSalvo.getLesoes());
-        crd.setQueimaduras(checkoutSalvo.getQueimaduras());
+    Turno turno;
+    if (agora.isBefore(LocalTime.of(12, 0))) {
+        turno = Turno.MANHA;
+    } else {
+        turno = Turno.TARDE;
+    }
 
-        LocalTime agora = LocalTime.now();
+    CheckoutEntity checkout = new CheckoutEntity();
 
-        Turno turno;
+    checkout.setPosto(posto);
+    checkout.setTurno(turno); // ✅ ANTES DE SALVAR
+    checkout.setTurno(definirTurno());
 
-        if (agora.isBefore(LocalTime.of(12, 0))) {
-            turno = Turno.MANHA;
-        } else {
-            turno = Turno.TARDE;
-        }
+    Arquivo arquivo = arquivoService.upload(dto.getFoto());
+    checkout.setFoto(arquivo);
 
-        checkout.setTurno(turno);
+    checkout.setPrevencoes(dto.getPrevencoes());
+    checkout.setLesoes(dto.getLesoes());
+    checkout.setQueimaduras(dto.getQueimaduras());
 
-        return crd;
+    CheckoutEntity checkoutSalvo = checkoutRepository.save(checkout);
+
+    CheckoutResponseDTO crd = new CheckoutResponseDTO();
+    crd.setPosto(posto.getNome());
+    crd.setHorario(checkoutSalvo.getCreatedAt());
+    crd.setPrevencoes(checkoutSalvo.getPrevencoes());
+    crd.setLesoes(checkoutSalvo.getLesoes());
+    crd.setQueimaduras(checkoutSalvo.getQueimaduras());
+
+    return crd;
+
 
     }
 }

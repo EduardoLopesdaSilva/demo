@@ -17,7 +17,7 @@ public class DataInitializer {
 public CommandLineRunner initPostos(PostoRepository repository){
     return args -> {
 
-        if(repository.count() == 0){
+            if(true){
 
             for(int i = 1; i <= 21; i++){
                 PostoEntity posto = new PostoEntity();
