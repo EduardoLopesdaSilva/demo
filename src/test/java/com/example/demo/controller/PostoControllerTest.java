@@ -24,7 +24,6 @@ import com.example.demo.enums.NivelAcesso;
 import com.example.demo.repository.PostoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import jakarta.transaction.Transactional;
 
 @SpringBootTest
 @ActiveProfiles("test")

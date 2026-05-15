@@ -82,4 +82,8 @@
                     .parseSignedClaims(token); // Faz o parsing e validação do token
         }
 
+        public String generateToken(String email) {
+            throw new UnsupportedOperationException("Unimplemented method 'generateToken'");
+        }
+
     }

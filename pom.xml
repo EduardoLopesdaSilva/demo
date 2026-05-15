@@ -24,6 +24,13 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.3.232</version>
+        </dependency>
+
+
         <!-- Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
