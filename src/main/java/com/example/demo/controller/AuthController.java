@@ -33,15 +33,34 @@ public class AuthController {
     @PostMapping("/auth/login")
     @Public
     public ResponseEntity<?> login(@RequestBody @Valid AuthDTO dto) {
+        String cpf = dto.getCpf();
         String email = dto.getEmail();
         String senha = dto.getSenha(); // TEXTO PURO
 
-        Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(email);
+        Optional<Usuario> usuarioOpt = Optional.empty();
+
+        // Tenta buscar por CPF primeiro (para guarda-vidas)
+        if (cpf != null && !cpf.isBlank()) {
+            if (cpf.contains("@")) {
+                usuarioOpt = usuarioRepository.findByEmail(cpf);
+            } else {
+                usuarioOpt = usuarioRepository.findByCpf(cpf);
+            }
+        }
+
+        // Se não encontrar por CPF, tenta por email (para sargento/admin)
+        if (usuarioOpt.isEmpty() && email != null && !email.isBlank()) {
+            usuarioOpt = usuarioRepository.findByEmail(email);
+        }
 
         if (usuarioOpt.isPresent() && passwordEncoder.matches(senha, usuarioOpt.get().getSenha())) {
-            String nivelAcesso = usuarioOpt.get().getNivelAcesso().toString();
+            Usuario usuario = usuarioOpt.get();
+            String nivelAcesso = usuario.getNivelAcesso().toString();
+            String identificador = usuario.getEmail() != null && !usuario.getEmail().isBlank()
+                    ? usuario.getEmail()
+                    : usuario.getCpf();
 
-            String token = jwtUtil.generateToken(email, nivelAcesso);
+            String token = jwtUtil.generateToken(identificador, nivelAcesso);
 
             return ResponseEntity.ok(Map.of(
                 "token", token, "tipo", nivelAcesso

@@ -15,27 +15,27 @@ public class DataInitializer {
 
     @SuppressWarnings("unused")
     @Bean
-public CommandLineRunner initPostos(PostoRepository repository){
-    return args -> {
+    public CommandLineRunner initPostos(PostoRepository repository){
+        return args -> {
 
-            if(true){
+            if(repository.count() <= 0){
 
-            for(int i = 1; i <= 21; i++){
-                PostoEntity posto = new PostoEntity();
+                for(int i = 1; i <= 21; i++){
+                    PostoEntity posto = new PostoEntity();
 
-                posto.setNome("Posto " + i);
-                posto.setDescricao("Posto da praia " + i);
-                posto.setStatus(NivelAcesso.LIVRE);
+                    posto.setNome("Posto " + i);
+                    posto.setDescricao("Posto da praia " + i);
+                    posto.setStatus(NivelAcesso.LIVRE);
 
-                repository.save(posto);
+                    repository.save(posto);
+                }
+
+                System.out.println("✅ 21 postos criados com sucesso!");
+            } else {
+                System.out.println("Postos já existem no banco!");
             }
-
-            System.out.println("✅ 21 postos criados com sucesso!");
-        } else {
-            System.out.println("Postos já existem no banco!");
-        }
-    };
-}
+        };
+    }
     
     private final PasswordEncoder passwordEncoder;
 
@@ -49,13 +49,17 @@ public CommandLineRunner initPostos(PostoRepository repository){
             if(repository.count() <= 0){
                 Usuario usuario = new Usuario();
 
+                usuario.setNomeCompleto("Sargento Administrador");
+                usuario.setCpf("00000000000");
                 usuario.setEmail("admin@admin.com");
-                usuario.setNivelAcesso(NivelAcesso.LIVRE);
-                usuario.setSenha(passwordEncoder.encode("123456789"));
+                usuario.setNivelAcesso(NivelAcesso.ADMIN);
+                usuario.setSenha(passwordEncoder.encode("000"));
 
                 repository.save(usuario);
 
-                System.out.println("Usuário ADMIN criado com sucesso: admin@admin.com / 123456789");
+                System.out.println("✅ Usuário ADMIN criado com sucesso!");
+                System.out.println("   CPF: 00000000000");
+                System.out.println("   Senha: 000");
             }else{
                 System.out.println("Usuário ADMIN já existe no banco!");
             }

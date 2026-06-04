@@ -91,7 +91,7 @@ public class PostoControllerTest {
                 .content(json)
                 .header("Authorization", "Bearer " + token))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.nome").value("Posto 12"))
+            .andExpect(jsonPath("$.nome").value("Posto para Buscar por ID"))
             .andExpect(jsonPath("$.id").exists());
         }
             //deve deletar

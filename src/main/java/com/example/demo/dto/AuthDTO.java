@@ -1,22 +1,36 @@
 package com.example.demo.dto;
 
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class AuthDTO {
 
-    @Email(message = "O email deve ser válido.")
-    @NotBlank(message = "O email deve ser preenchido.")
+    // Aceita CPF ou email para login
+    private String cpf;
     private String email;
 
     @NotBlank(message = "A senha deve ser preenchido.")
     private String senha;
 
+    public AuthDTO(String identificador, String senhaOuEmail, String senhaOuCpf) {
+        String senhaInformada = senhaOuCpf != null ? senhaOuCpf : senhaOuEmail;
+        setIdentificador(identificador);
+        this.senha = senhaInformada;
+    }
+
+    public void setIdentificador(String identificador) {
+        if (identificador == null || identificador.isBlank()) {
+            return;
+        }
+
+        if (identificador.contains("@")) {
+            this.email = identificador;
+        } else {
+            this.cpf = identificador;
+        }
+    }
 }

@@ -83,7 +83,7 @@
         }
 
         public String generateToken(String email) {
-            throw new UnsupportedOperationException("Unimplemented method 'generateToken'");
+            return generateToken(email, null);
         }
 
     }

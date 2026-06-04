@@ -18,8 +18,15 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 public class Usuario extends BaseEntity {
 
-    @Column(name = "email", nullable = false, unique = true)
+    // Campo mantido para compatibilidade, mas não é mais usado como login
+    @Column(name = "email")
     private String email;
+
+    @Column(name = "nome_completo", nullable = false)
+    private String nomeCompleto;
+
+    @Column(name = "cpf", nullable = false, unique = true, length = 11)
+    private String cpf;
 
     @Column(name = "senha", nullable = false)
     private String senha;

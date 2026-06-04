@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.demo.config.JwtUtil;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Test;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 public class SecurityTest {
 
     @Autowired
@@ -31,10 +33,10 @@ public class SecurityTest {
     }
     @Test
     void verificarRotaAdmin() throws Exception {
-        String token = jwt.generateToken("tantofazcomotantofez@admin.com", NivelAcesso.LIVRE.toString());
+        String token = jwt.generateToken("tantofazcomotantofez@admin.com", NivelAcesso.ADMIN.toString());
 
         mockMvc.perform(get("/test-security/admin")
-        .header("Authorization", "Bearer" + token))
+        .header("Authorization", "Bearer " + token))
         .andExpect(status().isOk())
         .andExpect(content().string("admin"));
     }
@@ -48,7 +50,7 @@ public class SecurityTest {
         String  token = jwt.generateToken("tantofaz@admin.com", NivelAcesso.OCUPADO.toString());
 
         mockMvc.perform(get("/test-security/admin")
-        .header("Authorization", "Bearer" + token))
+        .header("Authorization", "Bearer " + token))
         .andExpect(status().isForbidden());
     }
 }

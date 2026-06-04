@@ -1,8 +1,17 @@
 package com.example.demo.dto;
 
 public class LoginDTO {
+    private String cpf;
     private String email;
     private String senha;
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
 
     public String getEmail() {
         return email;

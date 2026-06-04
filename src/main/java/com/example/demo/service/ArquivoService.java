@@ -26,6 +26,9 @@ public class ArquivoService {
     private ArquivoRepository arquivoRepository;
 
     public Arquivo upload(MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            return null;
+        }
 
         Path root = Paths.get(path);
 
@@ -51,5 +54,19 @@ public class ArquivoService {
         } catch (IOException e) {
             throw new RuntimeException("Erro ao salvar o arquivo", e);
         }
+    }
+
+    public Arquivo registrarReferencia(String referencia) {
+        if (referencia == null || referencia.isBlank()) {
+            return null;
+        }
+
+        Arquivo arquivo = new Arquivo();
+        arquivo.setNome(referencia);
+        arquivo.setCaminho(referencia);
+        arquivo.setTamanho(0L);
+        arquivo.setTipo("text/plain");
+
+        return arquivoRepository.save(arquivo);
     }
 }
