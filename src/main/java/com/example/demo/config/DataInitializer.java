@@ -13,7 +13,6 @@ import com.example.demo.repository.UsuarioRepository;
 @Configuration
 public class DataInitializer {
 
-    @SuppressWarnings("unused")
     @Bean
     public CommandLineRunner initPostos(PostoRepository repository){
         return args -> {

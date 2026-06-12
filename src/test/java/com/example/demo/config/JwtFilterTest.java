@@ -30,7 +30,7 @@ class JwtFilterTest {
 
     @Test
     void autenticaUsuarioQuandoBearerTokenEhValido() throws Exception {
-        JwtFilter filter = new JwtFilter(jwtUtil);
+        JwtFilter filter = new JwtFilter();
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockFilterChain chain = new MockFilterChain();
@@ -49,7 +49,7 @@ class JwtFilterTest {
 
     @Test
     void continuaSemAutenticarQuandoHeaderNaoEhBearer() throws Exception {
-        JwtFilter filter = new JwtFilter(jwtUtil);
+        JwtFilter filter = new JwtFilter();
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
@@ -61,7 +61,7 @@ class JwtFilterTest {
 
     @Test
     void continuaSemAutenticarQuandoTokenEhInvalido() throws Exception {
-        JwtFilter filter = new JwtFilter(jwtUtil);
+        JwtFilter filter = new JwtFilter();
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
         request.addHeader("Authorization", "Bearer token-invalido");

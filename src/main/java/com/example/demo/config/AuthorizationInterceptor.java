@@ -26,7 +26,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
     private JwtUtil jwtUtil;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle( HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if (request.getDispatcherType() == DispatcherType.ERROR || "/error".equals(request.getRequestURI())) {
             return true;
         }

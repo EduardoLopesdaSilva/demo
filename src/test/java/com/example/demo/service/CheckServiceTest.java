@@ -24,7 +24,6 @@ import com.example.demo.entity.Arquivo;
 import com.example.demo.entity.CheckinEntity;
 import com.example.demo.entity.CheckoutEntity;
 import com.example.demo.entity.PostoEntity;
-import com.example.demo.enums.Turno;
 import com.example.demo.enums.NivelAcesso;
 import com.example.demo.repository.CheckinRepository;
 import com.example.demo.repository.CheckoutRepository;

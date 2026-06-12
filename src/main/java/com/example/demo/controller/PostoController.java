@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.annotations.Admin;
 import com.example.demo.annotations.Public;
 import com.example.demo.entity.PostoEntity;
 import com.example.demo.enums.NivelAcesso;
 import com.example.demo.repository.PostoRepository;
 
 @RestController
-@Public
 @RequestMapping("/postos")
 public class PostoController {
 
@@ -26,12 +26,13 @@ public class PostoController {
     private PostoRepository repository;
 
     @GetMapping
+    @Public
     public List<PostoEntity> listar() {
-
-        return repository.findAllActive(); // ou findAll()
+        return repository.findAllActive();
     }
 
     @GetMapping("/{id}")
+    @Public
     public ResponseEntity<PostoEntity> buscarPorId(@PathVariable Long id) {
         return repository.findById(id)
                 .map(ResponseEntity::ok)
@@ -39,14 +40,14 @@ public class PostoController {
     }
 
     @PostMapping
+    @Admin
     public PostoEntity criar(@RequestBody PostoEntity posto) {
-
-    posto.setStatus(NivelAcesso.LIVRE); // 🔥 AQUI
-
-    return repository.save(posto);
+        posto.setStatus(NivelAcesso.LIVRE);
+        return repository.save(posto);
     }
 
     @DeleteMapping("/{id}")
+    @Admin
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         if (!repository.existsById(id)) {
             return ResponseEntity.notFound().build();

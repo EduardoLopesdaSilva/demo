@@ -25,9 +25,9 @@ import jakarta.transaction.Transactional;
 public class CheckService {
 
     private Turno definirTurno() {
-    LocalTime agora = LocalTime.now();
-    return agora.isBefore(LocalTime.of(12, 0)) ? Turno.MANHA : Turno.TARDE;
-}
+        LocalTime agora = LocalTime.now();
+        return agora.isBefore(LocalTime.of(12, 0)) ? Turno.MANHA : Turno.TARDE;
+    }
     @Autowired
     private ArquivoService arquivoService;
     
@@ -78,7 +78,7 @@ public class CheckService {
     response.setHorario(salvo.getCreatedAt());
 
     return response;
-}
+    }
 
  @Transactional
  public CheckoutResponseDTO checkout(CheckoutDTO dto){
@@ -124,4 +124,4 @@ public class CheckService {
 
 
     }
-}
+    }

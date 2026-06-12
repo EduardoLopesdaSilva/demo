@@ -57,6 +57,7 @@ class AuthAndLoginControllerTest {
         ResponseEntity<?> response = authController.login(new AuthDTO("admin@admin.com", null, "123"));
 
         assertEquals(200, response.getStatusCode().value());
+     
         Map<String, String> body = (Map<String, String>) response.getBody();
         assertEquals("jwt", body.get("token"));
         assertEquals("ADMIN", body.get("tipo"));
