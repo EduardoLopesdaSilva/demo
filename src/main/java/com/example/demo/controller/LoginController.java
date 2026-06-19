@@ -63,6 +63,7 @@ public class LoginController {
         return ResponseEntity.ok(new AuthResponseDTO(
                 token,
                 user.getId(),
+                user.getNomeCompleto(),
                 user.getCpf(),
                 user.getEmail(),
                 user.getNivelAcesso()));

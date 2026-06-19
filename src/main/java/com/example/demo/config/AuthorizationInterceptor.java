@@ -17,6 +17,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.lang.annotation.Annotation;
+import java.io.IOException;
 import java.util.List;
 
 @Component
@@ -48,7 +49,8 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
          // Valida o token JWT do header
         String token = extractToken(request);
         if (token == null || !jwtUtil.validateToken(token)) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            SecurityContextHolder.clearContext();
+            writeJsonError(response, HttpServletResponse.SC_UNAUTHORIZED, "Sua sessão expirou. Faça login novamente.");
             return false;
         }
 
@@ -63,13 +65,13 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
                 new UsernamePasswordAuthenticationToken(username, null, authorities);
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authToken);
-        SecurityContextHolder.getContextHolderStrategy().setDeferredContext(() -> context);
+        SecurityContextHolder.setContext(context);
 
         // @Admin: exige role ADMIN
         if (hasAnnotation(handlerMethod, Admin.class)) {
             boolean isAdmin = authorities.stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
             if (!isAdmin) {
-                response.sendError(HttpServletResponse.SC_FORBIDDEN);
+                writeJsonError(response, HttpServletResponse.SC_FORBIDDEN, "Você não tem permissão para acessar esta área.");
                 return false;
             }
         }
@@ -88,5 +90,12 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
     private boolean hasAnnotation(HandlerMethod handler, Class<? extends Annotation> annotation) {
         return AnnotatedElementUtils.hasAnnotation(handler.getMethod(), annotation)
                 || AnnotatedElementUtils.hasAnnotation(handler.getBeanType(), annotation);
+    }
+
+    private void writeJsonError(HttpServletResponse response, int status, String message) throws IOException {
+        response.setStatus(status);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write("{\"message\":\"" + message + "\"}");
     }
 }

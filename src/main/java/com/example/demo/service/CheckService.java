@@ -53,12 +53,10 @@ public class CheckService {
 
     Turno turno = definirTurno();
 
-    // 🚨 VERIFICA SE JÁ TEM TURNO ABERTO
-    boolean existeAberto = checkinRepository
-        .existsByPostoAndTurnoAndFimIsNull(posto, turno);
+    boolean existeAberto = checkinRepository.existsByPostoAndFimIsNull(posto);
 
     if (existeAberto) {
-        throw new RuntimeException("Já existe um check-in aberto para esse posto nesse turno");
+        throw new RuntimeException("Já existe um turno em aberto para este posto");
     }
 
     CheckinEntity checkin = new CheckinEntity();
@@ -86,11 +84,11 @@ public class CheckService {
     PostoEntity posto = postoRepository.findById(dto.getPostoId())
         .orElseThrow(() -> new RuntimeException("Posto não encontrado"));
 
-    Turno turno = definirTurno();
-
     CheckinEntity checkinAberto = checkinRepository
-        .findByPostoAndTurnoAndFimIsNull(posto, turno)
-        .orElseThrow(() -> new RuntimeException("Não existe check-in aberto para este posto neste turno"));
+        .findFirstByPostoAndFimIsNullOrderByCreatedAtDesc(posto)
+        .orElseThrow(() -> new RuntimeException("Não existe check-in aberto para este posto"));
+
+    Turno turno = checkinAberto.getTurno() != null ? checkinAberto.getTurno() : definirTurno();
 
     CheckoutEntity checkout = new CheckoutEntity();
 

@@ -2,6 +2,8 @@ package com.example.demo.entity;
 
 import com.example.demo.enums.Turno;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -27,6 +29,7 @@ public class CheckoutEntity extends BaseEntity {
     @ManyToOne
     private Arquivo foto;
 
+    @Enumerated(EnumType.STRING)
     private Turno turno;
 
     private String prevencoes;

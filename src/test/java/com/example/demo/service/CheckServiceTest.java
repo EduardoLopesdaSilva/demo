@@ -54,7 +54,7 @@ class CheckServiceTest {
         Arquivo arquivo = new Arquivo();
 
         when(postoRepository.findById(1L)).thenReturn(Optional.of(posto));
-        when(checkinRepository.existsByPostoAndTurnoAndFimIsNull(any(), any())).thenReturn(false);
+        when(checkinRepository.existsByPostoAndFimIsNull(any())).thenReturn(false);
         when(arquivoService.registrarReferencia(dto.getFoto())).thenReturn(arquivo);
         when(checkinRepository.save(any(CheckinEntity.class))).thenAnswer(invocation -> {
             CheckinEntity entity = invocation.getArgument(0);
@@ -75,11 +75,11 @@ class CheckServiceTest {
         CheckinDTO dto = checkinDto(2L);
 
         when(postoRepository.findById(2L)).thenReturn(Optional.of(posto));
-        when(checkinRepository.existsByPostoAndTurnoAndFimIsNull(any(), any())).thenReturn(true);
+        when(checkinRepository.existsByPostoAndFimIsNull(any())).thenReturn(true);
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> service.checkin(dto));
 
-        assertEquals("Já existe um check-in aberto para esse posto nesse turno", exception.getMessage());
+        assertEquals("Já existe um turno em aberto para este posto", exception.getMessage());
     }
 
     @Test
@@ -92,9 +92,10 @@ class CheckServiceTest {
         dto.setLesoes("nenhuma");
         dto.setQueimaduras("nenhuma");
         CheckinEntity checkinAberto = new CheckinEntity();
+        checkinAberto.setTurno(com.example.demo.enums.Turno.MANHA);
 
         when(postoRepository.findById(3L)).thenReturn(Optional.of(posto));
-        when(checkinRepository.findByPostoAndTurnoAndFimIsNull(any(), any())).thenReturn(Optional.of(checkinAberto));
+        when(checkinRepository.findFirstByPostoAndFimIsNullOrderByCreatedAtDesc(any())).thenReturn(Optional.of(checkinAberto));
         when(arquivoService.registrarReferencia(dto.getFoto())).thenReturn(new Arquivo());
         when(checkoutRepository.save(any(CheckoutEntity.class))).thenAnswer(invocation -> {
             CheckoutEntity entity = invocation.getArgument(0);

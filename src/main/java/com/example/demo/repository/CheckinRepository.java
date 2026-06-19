@@ -14,6 +14,10 @@ public interface CheckinRepository extends JpaRepository<CheckinEntity, Long>{
 
     boolean existsByPostoAndTurnoAndFimIsNull(PostoEntity posto, Turno turno);
 
+    boolean existsByPostoAndFimIsNull(PostoEntity posto);
+
     Optional<CheckinEntity> findByPostoAndTurnoAndFimIsNull(PostoEntity posto, Turno turno);
+
+    Optional<CheckinEntity> findFirstByPostoAndFimIsNullOrderByCreatedAtDesc(PostoEntity posto);
 
 }

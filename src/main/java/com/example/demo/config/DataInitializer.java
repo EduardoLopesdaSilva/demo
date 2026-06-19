@@ -3,10 +3,12 @@ package com.example.demo.config;
 import com.example.demo.entity.PostoEntity;
 import com.example.demo.repository.PostoRepository;
 import com.example.demo.enums.NivelAcesso;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.jdbc.core.JdbcTemplate;
 import com.example.demo.entity.Usuario;
 import com.example.demo.repository.UsuarioRepository;
 
@@ -37,9 +39,14 @@ public class DataInitializer {
     }
     
     private final PasswordEncoder passwordEncoder;
+    private final JdbcTemplate jdbcTemplate;
 
-    public DataInitializer(PasswordEncoder passwordEncoder){
+    @Value("${spring.datasource.url}")
+    private String datasourceUrl;
+
+    public DataInitializer(PasswordEncoder passwordEncoder, JdbcTemplate jdbcTemplate){
         this.passwordEncoder = passwordEncoder;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Bean
@@ -64,6 +71,26 @@ public class DataInitializer {
             }
         };
     }
-    
+
+    @Bean
+    public CommandLineRunner alignLegacySchema() {
+        return args -> {
+            if (datasourceUrl == null || !datasourceUrl.startsWith("jdbc:mysql")) {
+                return;
+            }
+
+            executeIgnoringErrors("ALTER TABLE checkouts DROP CHECK checkouts_chk_1");
+            executeIgnoringErrors("ALTER TABLE checkouts DROP CONSTRAINT checkouts_chk_1");
+            executeIgnoringErrors("ALTER TABLE checkouts MODIFY COLUMN turno ENUM('MANHA','TARDE')");
+        };
+    }
+
+    private void executeIgnoringErrors(String sql) {
+        try {
+            jdbcTemplate.execute(sql);
+        } catch (Exception ignored) {
+            // O schema já pode estar alinhado; nesse caso não precisamos interromper a aplicação.
+        }
+    }
 
 }
