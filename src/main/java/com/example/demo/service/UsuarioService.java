@@ -16,7 +16,7 @@ public class UsuarioService extends BaseService<Usuario, UsuarioDTO> {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository repository, PasswordEncoder passwordEncoder){
+    public UsuarioService(UsuarioRepository repository, PasswordEncoder passwordEncoder) {
         super(repository);
         this.usuarioRepository = repository;
         this.passwordEncoder = passwordEncoder;
@@ -25,21 +25,18 @@ public class UsuarioService extends BaseService<Usuario, UsuarioDTO> {
     @Override
     @Transactional
     public UsuarioDTO create(UsuarioDTO dto) {
-        // Validar CPF único
-        if (usuarioRepository.findByCpf(dto.getCpf()).isPresent()) {
-            throw new RuntimeException("Já existe um usuário cadastrado com este CPF");
+        String cpf = normalizarCpf(dto.getCpf());
+
+        if (usuarioRepository.findByCpf(cpf).isPresent()) {
+            throw new RuntimeException("Ja existe um usuario cadastrado com este CPF");
         }
 
         Usuario usuario = new Usuario();
         usuario.setNomeCompleto(dto.getNomeCompleto());
-        usuario.setCpf(dto.getCpf());
-        
-        // Gerar senha automaticamente usando os 3 primeiros dígitos do CPF
-        String senhaInicial = dto.getCpf().substring(0, 3);
-        usuario.setSenha(passwordEncoder.encode(senhaInicial));
-        
-        usuario.setNivelAcesso(dto.getNivelAcesso() != null ? dto.getNivelAcesso() : NivelAcesso.OCUPADO);
-        usuario.setEmail(dto.getEmail()); // Campo mantido para compatibilidade
+        usuario.setCpf(cpf);
+        usuario.setSenha(passwordEncoder.encode(senhaInicialPorCpf(cpf)));
+        usuario.setNivelAcesso(normalizarNivelAcesso(dto.getNivelAcesso()));
+        usuario.setEmail(dto.getEmail());
 
         return toDto(usuarioRepository.save(usuario));
     }
@@ -50,27 +47,43 @@ public class UsuarioService extends BaseService<Usuario, UsuarioDTO> {
         Usuario usuario = usuarioRepository.findById(id).orElseThrow();
 
         usuario.setNomeCompleto(dto.getNomeCompleto());
-        
-        // Se CPF for alterado, validar unicidade
-        if (dto.getCpf() != null && !dto.getCpf().equals(usuario.getCpf())) {
-            if (usuarioRepository.findByCpf(dto.getCpf()).isPresent()) {
-                throw new RuntimeException("Já existe um usuário cadastrado com este CPF");
+
+        if (dto.getCpf() != null && !normalizarCpf(dto.getCpf()).equals(usuario.getCpf())) {
+            String cpf = normalizarCpf(dto.getCpf());
+            if (usuarioRepository.findByCpf(cpf).isPresent()) {
+                throw new RuntimeException("Ja existe um usuario cadastrado com este CPF");
             }
-            usuario.setCpf(dto.getCpf());
-            // Ao alterar CPF, regerar senha com os 3 primeiros dígitos
-            String novaSenha = dto.getCpf().substring(0, 3);
-            usuario.setSenha(passwordEncoder.encode(novaSenha));
+            usuario.setCpf(cpf);
+            usuario.setSenha(passwordEncoder.encode(senhaInicialPorCpf(cpf)));
         }
-        
+
         usuario.setEmail(dto.getEmail());
         if (dto.getSenha() != null && !dto.getSenha().isBlank()) {
             usuario.setSenha(passwordEncoder.encode(dto.getSenha()));
         }
         if (dto.getNivelAcesso() != null) {
-            usuario.setNivelAcesso(dto.getNivelAcesso());
+            usuario.setNivelAcesso(normalizarNivelAcesso(dto.getNivelAcesso()));
         }
 
         return toDto(usuarioRepository.save(usuario));
     }
 
+    private NivelAcesso normalizarNivelAcesso(NivelAcesso nivelAcesso) {
+        if (nivelAcesso == null || nivelAcesso == NivelAcesso.LIVRE || nivelAcesso == NivelAcesso.OCUPADO) {
+            return NivelAcesso.GUARDA_VIDAS;
+        }
+        return nivelAcesso;
+    }
+
+    private String normalizarCpf(String cpf) {
+        String cpfNormalizado = cpf == null ? "" : cpf.replaceAll("\\D", "");
+        if (cpfNormalizado.length() != 11) {
+            throw new RuntimeException("O CPF deve conter exatamente 11 numeros");
+        }
+        return cpfNormalizado;
+    }
+
+    private String senhaInicialPorCpf(String cpf) {
+        return normalizarCpf(cpf).substring(0, 6);
+    }
 }

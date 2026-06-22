@@ -21,6 +21,7 @@ public interface BaseRepository<E, ID> extends JpaRepository<E, ID> {
             """)
     void softDeleteById(ID id);
 
+    @SuppressWarnings("null")
     @Query("""
         SELECT e FROM #{#entityName} e 
         WHERE e.ativo = TRUE

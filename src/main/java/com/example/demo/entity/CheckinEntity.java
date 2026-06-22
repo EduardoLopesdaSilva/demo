@@ -24,6 +24,9 @@ public class CheckinEntity extends BaseEntity {
     @ManyToOne
     private PostoEntity posto;
 
+    @ManyToOne
+    private Usuario usuario;
+
     private Integer prevencoes;
 
     private String lesoes;

@@ -33,6 +33,7 @@ class CheckControllerTest {
         ReflectionTestUtils.setField(checkoutController, "checkService", checkService);
     }
 
+    @SuppressWarnings("null")
     @Test
     void checkinDevolveRespostaDoServico() {
         CheckinDTO dto = new CheckinDTO();
@@ -48,6 +49,7 @@ class CheckControllerTest {
         verify(checkService).checkin(dto);
     }
 
+    @SuppressWarnings("null")
     @Test
     void checkoutLiberaPostoEDevolveRespostaDoServico() {
         CheckoutDTO dto = new CheckoutDTO();

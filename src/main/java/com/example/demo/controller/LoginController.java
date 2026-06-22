@@ -1,4 +1,5 @@
 package com.example.demo.controller;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,6 +13,7 @@ import com.example.demo.config.JwtUtil;
 import com.example.demo.dto.AuthResponseDTO;
 import com.example.demo.dto.LoginDTO;
 import com.example.demo.entity.Usuario;
+import com.example.demo.exception.InvalidCredentialsException;
 import com.example.demo.repository.UsuarioRepository;
 
 @RestController
@@ -30,31 +32,14 @@ public class LoginController {
     @PostMapping("/login")
     @Public
     public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginDTO dto) {
-
-        Usuario user = null;
-
-        // Tenta buscar por CPF primeiro (para guarda-vidas)
-        if (dto.getCpf() != null && !dto.getCpf().isBlank()) {
-            var userOpt = usuarioRepository.findByCpf(dto.getCpf());
-            if (userOpt.isPresent()) {
-                user = userOpt.get();
-            }
+        if (dto == null || dto.getSenha() == null || dto.getSenha().isBlank()) {
+            throw new InvalidCredentialsException();
         }
 
-        // Se não encontrar por CPF, tenta por email (para sargento/admin)
-        if (user == null && dto.getEmail() != null && !dto.getEmail().isBlank()) {
-            var userOpt = usuarioRepository.findByEmail(dto.getEmail());
-            if (userOpt.isPresent()) {
-                user = userOpt.get();
-            }
-        }
+        Usuario user = buscarUsuario(dto);
 
-        if (user == null) {
-            throw new RuntimeException("Usuário não encontrado");
-        }
-
-        if (!passwordEncoder.matches(dto.getSenha(), user.getSenha())) {
-            throw new RuntimeException("Senha inválida");
+        if (user == null || !passwordEncoder.matches(dto.getSenha(), user.getSenha())) {
+            throw new InvalidCredentialsException();
         }
 
         String identificador = user.getCpf() != null ? user.getCpf() : user.getEmail();
@@ -67,5 +52,17 @@ public class LoginController {
                 user.getCpf(),
                 user.getEmail(),
                 user.getNivelAcesso()));
+    }
+
+    private Usuario buscarUsuario(LoginDTO dto) {
+        if (dto.getCpf() != null && !dto.getCpf().isBlank()) {
+            return usuarioRepository.findByCpf(dto.getCpf()).orElse(null);
+        }
+
+        if (dto.getEmail() != null && !dto.getEmail().isBlank()) {
+            return usuarioRepository.findByEmail(dto.getEmail()).orElse(null);
+        }
+
+        return null;
     }
 }

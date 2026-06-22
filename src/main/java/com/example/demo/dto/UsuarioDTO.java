@@ -17,6 +17,9 @@ public class UsuarioDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private boolean ativo;
+
     // Campo mantido para compatibilidade, mas não é mais usado como login
     private String email;
 

@@ -79,7 +79,7 @@ class CheckServiceTest {
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> service.checkin(dto));
 
-        assertEquals("Já existe um turno em aberto para este posto", exception.getMessage());
+        assertEquals("Ja existe um turno em aberto para este posto", exception.getMessage());
     }
 
     @Test

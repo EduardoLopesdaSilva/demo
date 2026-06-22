@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.CheckinDTO;
 import com.example.demo.dto.CheckinResponseDTO;
+import com.example.demo.dto.ActiveShiftDTO;
 import com.example.demo.entity.CheckinEntity;
 import com.example.demo.service.CheckService;
 import com.example.demo.repository.CheckinRepository;
@@ -34,6 +35,13 @@ public class CheckinController {
     @PostMapping("/in")
     public ResponseEntity<CheckinResponseDTO> checkin(@RequestBody @Valid CheckinDTO dto){
         return ResponseEntity.ok(checkService.checkin(dto));
+    }
+
+    @GetMapping("/active")
+    public ResponseEntity<ActiveShiftDTO> getActiveShift(@RequestParam Long usuarioId) {
+        return checkService.turnoAtivo(usuarioId)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.noContent().build());
     }
 
     @GetMapping("/history")
