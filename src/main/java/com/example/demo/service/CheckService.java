@@ -88,6 +88,16 @@ public class CheckService {
 
         Turno turno = checkinAberto.getTurno() != null ? checkinAberto.getTurno() : definirTurno();
 
+        if (dto.getPrevencoes() == null || dto.getPrevencoes().trim().isEmpty()) {
+            throw new RuntimeException("Informe a quantidade de prevenções.");
+        }
+        if (dto.getLesoes() == null || dto.getLesoes().trim().isEmpty()) {
+            throw new RuntimeException("Informe a quantidade de lesões.");
+        }
+        if (dto.getQueimaduras() == null || dto.getQueimaduras().trim().isEmpty()) {
+            throw new RuntimeException("Informe a quantidade de queimaduras.");
+        }
+
         CheckoutEntity checkout = new CheckoutEntity();
         checkout.setPosto(posto);
         checkout.setCheckin(checkinAberto);
@@ -96,9 +106,9 @@ public class CheckService {
         Arquivo arquivo = arquivoService.registrarReferencia(dto.getFoto());
         checkout.setFoto(arquivo);
 
-        checkout.setPrevencoes(dto.getPrevencoes());
-        checkout.setLesoes(dto.getLesoes());
-        checkout.setQueimaduras(dto.getQueimaduras());
+        checkout.setPrevencoes(dto.getPrevencoes().trim());
+        checkout.setLesoes(dto.getLesoes().trim());
+        checkout.setQueimaduras(dto.getQueimaduras().trim());
 
         CheckoutEntity checkoutSalvo = checkoutRepository.save(checkout);
 

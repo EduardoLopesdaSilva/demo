@@ -46,10 +46,13 @@ public class CheckinController {
 
     @GetMapping("/history")
     public ResponseEntity<List<CheckinEntity>> getHistory(
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data) {
-        final LocalDate dataBusca = (data != null) ? data : LocalDate.now();
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate data,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataInicial,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dataFinal) {
         List<CheckinEntity> checkins = checkinRepository.findAll().stream()
-                .filter(c -> c.getCreatedAt().toLocalDate().equals(dataBusca))
+                .filter(c -> data == null || c.getCreatedAt().toLocalDate().equals(data))
+                .filter(c -> dataInicial == null || !c.getCreatedAt().toLocalDate().isBefore(dataInicial))
+                .filter(c -> dataFinal == null || !c.getCreatedAt().toLocalDate().isAfter(dataFinal))
                 .toList();
         return ResponseEntity.ok(checkins);
     }

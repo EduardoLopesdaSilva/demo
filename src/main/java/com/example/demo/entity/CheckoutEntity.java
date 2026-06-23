@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import com.example.demo.enums.Turno;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -17,7 +18,6 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "checkouts")
 @EqualsAndHashCode(callSuper = false)
-
 public class CheckoutEntity extends BaseEntity {
 
     @ManyToOne
@@ -32,7 +32,12 @@ public class CheckoutEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Turno turno;
 
+    @Column(nullable = false)
     private String prevencoes;
+
+    @Column(nullable = false)
     private String lesoes;
+
+    @Column(nullable = false)
     private String queimaduras;
 }

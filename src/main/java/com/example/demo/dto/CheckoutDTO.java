@@ -2,6 +2,7 @@ package com.example.demo.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,14 +16,16 @@ public class CheckoutDTO {
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String foto;
-    // Outros campos relevantes para o checkout, como prevenções e lesões
 
+    @NotBlank(message = "Informe a quantidade de prevenções.")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String prevencoes;
 
+    @NotBlank(message = "Informe a quantidade de lesões.")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String lesoes;
 
+    @NotBlank(message = "Informe a quantidade de queimaduras.")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String queimaduras;
 
